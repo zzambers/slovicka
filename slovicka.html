@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Slovicka</title>
+    <style>
+        #hideCheckbox:checked ~ div {
+            display: none;
+        }
+        * {
+            font-size: large;
+        }
+    </style>
+    <script>
+
+    function onLoad() {
+        langPairsOrig = [];
+        langPairs = [];
+        counter = 0;
+        updateUI();
+    }
+
+    function LangPair(lang1, lang2) {
+        this.lang1 = lang1;
+        this.lang2 = lang2;
+    }
+
+    function shuffle(array) {
+        for(var i = array.length - 1; i >= 1; --i) {
+            var r = Math.floor(Math.random() * (i + 1));
+            var tmp = array[i];
+            array[i] = array[r];
+            array[r] = tmp;
+        }
+    }
+
+    function restart() {
+        var shuffleCheckbox = document.getElementById("shuffleCheckbox");
+        counter = 0;
+        if (shuffleCheckbox.checked) {
+            var shuffeled = [];
+            for (var i = 0; i < langPairsOrig.length; ++i) {
+                shuffeled.push(langPairsOrig[i]);
+            }
+            shuffle(shuffeled);
+            langPairs = shuffeled;
+        } else {
+            langPairs = langPairsOrig;
+        }
+        updateUI();
+    }
+
+    function loadInput() {
+        var delimiter = document.getElementById("separatorInput").value;
+        var text = document.getElementById("src").value;
+        var lines = text.split(/\r\n|\n|\r/);
+        var pairs = [];
+
+        for (var i = 0; i < lines.length; ++i) {
+            var line = lines[i];
+            var delimIndex = line.indexOf(delimiter);
+            if (delimIndex > 0 && delimIndex + delimiter.length < line.length) {
+                var lang1 = line.substring(0, delimIndex).trim();
+                var lang2 = line.substring(delimIndex + delimiter.length).trim();
+                if (lang1.length > 0 && lang2.length > 0) {
+                    var pair = new LangPair(lang1, lang2);
+                    pairs.push(pair);
+                }
+            }
+        }
+        if (pairs.length > 0) {
+            langPairsOrig = pairs;
+            restart();
+        }
+    }
+
+    function updateUI() {
+        var srcElement = document.getElementById("src");
+        var loadButton = document.getElementById("loadButton");
+        var restartButton = document.getElementById("restartButton");
+        var orderSelect = document.getElementById("orderSelect");
+        var lang1Element = document.getElementById("lang1");
+        var lang2Element = document.getElementById("lang2");
+        var prevButton = document.getElementById("prevButton");
+        var nextButton = document.getElementById("nextButton");
+        var counterElement = document.getElementById("counter");
+
+        loadButton.disabled = srcElement.value.length == 0;
+        restartButton.disabled = langPairs ? false : true;
+
+        var length = langPairs.length;
+        var cntr = counter;
+        var fwOrder = "fw" == orderSelect.value;
+
+        if (cntr >= 0 && cntr < length * 2) {
+            var index = Math.floor(counter / 2);
+            var even = (cntr % 2) > 0;
+            if (even) {
+                lang1Element.value = fwOrder ? langPairs[index].lang1 : langPairs[index].lang2;
+                lang2Element.value = fwOrder ? langPairs[index].lang2 : langPairs[index].lang1;
+            } else {
+                lang1Element.value = fwOrder ? langPairs[index].lang1 : langPairs[index].lang2;
+                lang2Element.value = "";
+            }
+            counterElement.value = "" + (index+1) + "/" + length;
+        } else {
+            lang1Element.value = "";
+            lang2Element.value = "";
+            counterElement.value = "N/A";
+        }
+
+        prevButton.disabled = cntr <= 0;
+        nextButton.disabled = cntr + 1 >= length * 2;
+    }
+
+    function prev() {
+        --counter;
+        if (counter < 0) {
+            counter = 0;
+        }
+        updateUI();
+    }
+
+    function next() {
+        ++counter;
+        if (counter >= langPairs.length * 2) {
+            counter = langPairs.length * 2 - 1;
+        }
+        updateUI();
+    }
+
+    </script>
+  </head>
+  <body onload="onLoad()">
+    <div>
+        <label for="foldCheckbox">Hide</label>
+        <input id="hideCheckbox" type="checkbox" /><br/>
+        <div>
+            <button id="loadButton" disabled="false" onclick="loadInput()">load</button>
+            <label for="separatorInput">Separator:</label>
+            <input id="separatorInput" type="text" value="=" />
+            <br/>
+            <textarea id="src" rows="20" style="width:90%;">hello = dobrý den
+goodbye = nashleanou</textarea>
+            <br/>
+        </div>
+    </div>
+
+    <button id="restartButton" disabled="true" onclick="restart()">restart</button>
+    <select id="orderSelect">
+        <option value="fw" selected="selected">1.->2.</option>
+        <option value="bw">2.->1.</option>
+    </select>
+    <label for="shuffleCheckbox">shuffle</label>
+    <input id="shuffleCheckbox" type="checkbox" checked="checked"/>
+    <br/>
+    <!--
+    <label for="lang1">Lang1:</label>
+    -->
+    <input id="lang1" type="text" readonly="readonly" style="width:90%;" /> <br/>
+    <!--
+    <label for="lang2">Lang2:</label>
+    -->
+    <input id="lang2" type="text" readonly="readonly" style="width:90%;" /><br/>
+    <input id="counter" type="text" readonly="readonly" /><br/>
+    <button id="prevButton" disabled="true" onclick="prev()">prev</button>
+    <button id="nextButton" disabled="true" onclick="next()">next</button>
+
+
+  </body>
+</html>
