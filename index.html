@@ -145,7 +145,7 @@
         <a id="downloadLink" href="" download="slovicka.html" >˅DL</a>
         <br/>
         <div>
-            <button id="loadButton" disabled="false" onclick="loadInput()">load</button>
+            <button id="loadButton" onclick="loadInput()">load</button>
             <label for="separatorInput">Separator:</label>
             <input id="separatorInput" type="text" value="=" />
             <br/>
@@ -159,7 +159,7 @@ goodbye = nashleanou</textarea>
         <option value="fw" selected="selected">1.->2.</option>
         <option value="bw">2.->1.</option>
     </select>
-    <button id="restartButton" disabled="true" onclick="restart()">restart</button>
+    <button id="restartButton" disabled="disabled" onclick="restart()">restart</button>
     <label for="shuffleCheckbox">shuffle</label>
     <input id="shuffleCheckbox" type="checkbox" checked="checked"/>
     <br/>
@@ -172,8 +172,8 @@ goodbye = nashleanou</textarea>
     -->
     <input id="lang2" type="text" readonly="readonly" class="wide" /><br/>
     <input id="counter" type="text" readonly="readonly" /><br/>
-    <button id="prevButton" disabled="true" onclick="prev()">prev</button>
-    <button id="nextButton" disabled="true" onclick="next()">next</button>
+    <button id="prevButton" disabled="disabled" onclick="prev()">prev</button>
+    <button id="nextButton" disabled="disabled" onclick="next()">next</button>
 
 
   </body>
